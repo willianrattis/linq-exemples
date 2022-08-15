@@ -1,7 +1,4 @@
-﻿using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-
-namespace ExemplosLinq;
+﻿namespace ExemplosLinq;
 
 class Program
 {
@@ -11,9 +8,7 @@ class Program
         var listaCategorias = PopularDadosCategoria();
         var listaProdutosCategorias = PopularDados();
 
-        LinqSelectManyComWhereLambdaProduto(listaProdutosCategorias);
-        LinqSelectManySemWhereComFiltroLambdaProduto(listaProdutosCategorias);
-
+        LinqRangeLambda(listaProdutos, 1, 5);
     }
 
     static void LinqSelectForeach(List<Produto> listaProdutos)
@@ -161,7 +156,6 @@ class Program
 
     static void LinqComWhereLambda(List<Produto> listaProdutos)
     {
-
         var result = listaProdutos.Where(c => c.Id >= 2 && c.Id <= 5);
 
         ImprimirResultado(result, "Resultado do Where:");
@@ -200,7 +194,67 @@ class Program
         ImprimirResultado(result, "Resultado do reverse:");
     }
 
-    public void LinqComWhereComparacao(List<Produto> listaProdutos, int filtro)
+    public static void LinqTakeSkipLambda(List<Produto> listaProdutos)
+    {
+        var trePrimeiros = listaProdutos.Take(3);
+        var ignorarTrePrimeiros = listaProdutos.Skip(3);
+        var ignorarTrePrimeirosPegarTresProximos = listaProdutos.Skip(3).Take(3);
+
+        ImprimirResultado(trePrimeiros, "Capturando os 3 primeiros itens:");
+        ImprimirResultado(ignorarTrePrimeiros, "Ignorando os 3 primeiros itens:");
+        ImprimirResultado(ignorarTrePrimeirosPegarTresProximos, "Ignorando os 3 primeiros itens:");
+    }
+
+    public static void LinqSumLambda(List<Produto> listaProdutos)
+    {
+        // valor total da lista
+        var valotTotal = listaProdutos.Sum(prod => prod.Valor);
+
+        Console.WriteLine($"Valor total: {valotTotal}");
+    }
+
+    public static void LinqMediaLambda(List<Produto> listaProdutos)
+    {
+        // valor total da lista
+        var mediaValorProdutos = listaProdutos.Average(prod => prod.Valor);
+
+        Console.WriteLine($"Media: {mediaValorProdutos}");
+    }
+
+    public static void LinqCountLambda(List<Produto> listaProdutos)
+    {
+        // quantos itens tem na lista
+        var quantidadeItensLista = listaProdutos.Count();
+
+        Console.WriteLine($"Total de itens: {quantidadeItensLista}");
+    }
+
+    public static void LinqCountComFiltroLambda(List<Produto> listaProdutos, int filtro)
+    {
+        var result = listaProdutos.Count(prod => prod.Valor > filtro);
+
+        Console.WriteLine($"Total de itens com valor maior que {filtro}: {result}");
+    }
+
+    public static void LinqRangeLambda(List<Produto> listaProdutos, int inicio, int fim)
+    {
+        // criar uma lista com um range de numeros
+        var range = Enumerable.Range(inicio, fim);
+
+        foreach (var item in range)
+            Console.WriteLine(item);
+    }
+
+    public static void LinqRepeatLambda(List<Produto> produtos)
+    {
+        // criar uma lista com varios itens semelhantes
+        var listaProdutoIguais = Enumerable.Repeat(new Produto() { Id = 1 }, 5);
+
+        foreach (var item in listaProdutoIguais)
+            Console.WriteLine(item);
+    }
+
+    public static void LinqComWhereComparacao(List<Produto> listaProdutos, int filtro)
     {
         var result = from produto in listaProdutos
                      where produto.Valor == filtro
@@ -214,7 +268,7 @@ class Program
         ImprimirResultado(result, $"Resultado da comparação com {filtro}:");
     }
 
-    public void LinqComGroupByPorCategoria(List<Produto> listaProdutos)
+    public static void LinqComGroupByPorCategoria(List<Produto> listaProdutos)
     {
         IEnumerable<IGrouping<int, Produto>> result = from produto in listaProdutos
                                                       group produto by produto.CategoriaId into produtosAgrupados
@@ -231,7 +285,7 @@ class Program
         }
     }
 
-    public void LinqComJoinAnonima(List<Produto> listaProdutos, List<Categoria> listaCategorias)
+    public static void LinqComJoinAnonima(List<Produto> listaProdutos, List<Categoria> listaCategorias)
     {
         var result = from produto in listaProdutos
                      join categoria in listaCategorias
@@ -246,53 +300,49 @@ class Program
         ImprimirResultadoListaAnonima(result, $"Resultado JOIN:");
     }
 
-    public void SomaDaLista(List<Produto> listaProdutos)
+    public static void TakeSkip(List<Produto> listaProdutos)
     {
-        // valor total da lista
-        var valotTotal = listaProdutos.Sum(prod => prod.Valor);
+        var trePrimeiros = new List<Produto>();
+        var ignorarTrePrimeiros = new List<Produto>();
 
-        Console.WriteLine($"Valor total: {valotTotal}");
+        for (int i = 0; i < listaProdutos.Count; i++)
+        {
+            if (i < 3)
+            {
+                trePrimeiros.Add(listaProdutos[i]);
+            }    
+            else if (i > 2)
+            {
+                ignorarTrePrimeiros.Add(listaProdutos[i]);
+            }
+        }
+
+        ImprimirResultado(trePrimeiros, "Capturando os 3 primeiros itens:");
+        ImprimirResultado(ignorarTrePrimeiros, "Ignorando os 3 primeiros itens:");
     }
 
-    public void MediaDaLista(List<Produto> listaProdutos)
+    public static void Soma(List<Produto> listaProdutos)
     {
-        // valor total da lista
-        var mediaValorProdutos = listaProdutos.Average(prod => prod.Valor);
+        var total = 0M;
 
-        Console.WriteLine($"Media: {mediaValorProdutos}");
+        foreach (var item in listaProdutos)
+        {
+            total += item.Valor;
+        }
+
+        Console.WriteLine($"Soma de todos os valores: {total}");
     }
 
-    public void QuantidadeDeItensDaLista(List<Produto> listaProdutos)
+    public static void Media(List<Produto> listaProdutos)
     {
-        // quantos itens tem na lista
-        var quantidadeItensLista = listaProdutos.Count();
+        var total = 0M;
 
-        Console.WriteLine($"Total de itens: {quantidadeItensLista}");
-    }
+        foreach (var item in listaProdutos)
+        {
+            total += item.Valor;
+        }
 
-    public void QuantidadeDeItensDaListaComFiltro(List<Produto> listaProdutos, int filtro)
-    {
-        var quantidaItensValorMaiorQue = listaProdutos.Count(prod => prod.Valor > filtro);
-
-        Console.WriteLine($"Total de itens com valor maior que {filtro}: {quantidaItensValorMaiorQue}");
-    }
-
-    public void ListaComRange(List<Produto> listaProdutos)
-    {
-        // criar uma lista com um range de numeros
-        var range = Enumerable.Range(1, 15);
-
-        foreach (var item in range)
-            Console.WriteLine(item);
-    }
-
-    public void ListaComProdutosSemelhantes(List<Produto> produtos)
-    {
-        // criar uma lista com varios itens semelhantes
-        var listaProdutoIguais = Enumerable.Repeat(new Produto() { Id = 1 }, 5);
-
-        foreach (var item in listaProdutoIguais)
-            Console.WriteLine(item);
+        Console.WriteLine($"Soma de todos os valores: {(total / listaProdutos.Count)}");
     }
 
     #region Popular os Dados 
